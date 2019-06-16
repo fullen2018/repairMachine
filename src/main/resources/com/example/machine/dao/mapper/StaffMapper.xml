@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.machine.dao.mapper.StaffMapper">
+  <resultMap id="BaseResultMap" type="com.example.machine.model.StaffModel">
+    <id column="staff_id" jdbcType="INTEGER" property="staffId" />
+    <result column="staff_email" jdbcType="VARCHAR" property="staffEmail" />
+    <result column="staff_name" jdbcType="VARCHAR" property="staffName" />
+    <result column="staff_password" jdbcType="VARCHAR" property="staffPassword" />
+    <result column="staff_role" jdbcType="INTEGER" property="staffRole" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    staff_id, staff_email, staff_name, staff_password, staff_role
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from staff
+    where staff_id = #{staffId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from staff
+    where staff_id = #{staffId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="staff_id" keyProperty="staffId" parameterType="com.example.machine.model.StaffModel" useGeneratedKeys="true">
+    insert into staff (staff_email, staff_name, staff_password, 
+      staff_role)
+    values (#{staffEmail,jdbcType=VARCHAR}, #{staffName,jdbcType=VARCHAR}, #{staffPassword,jdbcType=VARCHAR}, 
+      #{staffRole,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" keyColumn="staff_id" keyProperty="staffId" parameterType="com.example.machine.model.StaffModel" useGeneratedKeys="true">
+    insert into staff
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="staffEmail != null">
+        staff_email,
+      </if>
+      <if test="staffName != null">
+        staff_name,
+      </if>
+      <if test="staffPassword != null">
+        staff_password,
+      </if>
+      <if test="staffRole != null">
+        staff_role,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="staffEmail != null">
+        #{staffEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="staffName != null">
+        #{staffName,jdbcType=VARCHAR},
+      </if>
+      <if test="staffPassword != null">
+        #{staffPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="staffRole != null">
+        #{staffRole,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.machine.model.StaffModel">
+    update staff
+    <set>
+      <if test="staffEmail != null">
+        staff_email = #{staffEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="staffName != null">
+        staff_name = #{staffName,jdbcType=VARCHAR},
+      </if>
+      <if test="staffPassword != null">
+        staff_password = #{staffPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="staffRole != null">
+        staff_role = #{staffRole,jdbcType=INTEGER},
+      </if>
+    </set>
+    where staff_id = #{staffId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.machine.model.StaffModel">
+    update staff
+    set staff_email = #{staffEmail,jdbcType=VARCHAR},
+      staff_name = #{staffName,jdbcType=VARCHAR},
+      staff_password = #{staffPassword,jdbcType=VARCHAR},
+      staff_role = #{staffRole,jdbcType=INTEGER}
+    where staff_id = #{staffId,jdbcType=INTEGER}
+  </update>
+  
+  <!--供通用接口使用-->
+  <!--根据条件查找数据条数-->
+  <select id="queryAmount" resultType="long" >
+    SELECT
+    count(*)
+    FROM
+    `staff`
+    <if test="conditions != null">
+      where ${conditions}
+    </if>
+  </select>
+
+  <!--根据条件查找数据-->
+  <select id="queryByCondition" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM
+    `staff`
+     where staff_role != 3
+    <if test="conditions != null">
+      and ${conditions}
+    </if>
+    <if test="limit != -1 and limit != -1">
+      limit #{offset,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <delete id="deletes" parameterType="Integer[]">
+    delete from `staff` where staff_id in
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+  <!--登录接口-->
+  <select id="login" resultType="com.example.machine.model.Token">
+         SELECT
+        staff_id as no,
+        staff_name as name,
+        staff_role as roleId
+      FROM
+        staff
+      WHERE
+      staff_email = #{email,jdbcType=VARCHAR} AND
+      staff_password = #{password,jdbcType=VARCHAR} AND
+      staff_role = #{role,jdbcType=INTEGER}
+  </select>
+
+  <!--重置密码-->
+  <update id="restPW">
+      UPDATE
+        staff
+        set
+        staff_password = #{password,jdbcType=VARCHAR}
+        WHERE
+        staff_id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!--获取所有的机修员-->
+  <select id="listMaintainer" resultType="com.example.machine.model.StaffModel">
+        SELECT
+          staff_id as staffId,
+          staff_name  as staffName
+      FROM
+          staff
+      WHERE
+          staff_role = 2
+  </select>
+
+  <!--添加职工查重邮箱-->
+  <select id="validateEmail" resultType="Integer">
+        SELECT
+      COUNT(*)
+       FROM
+         staff
+        WHERE
+      staff_email = #{email,jdbcType=VARCHAR}
+  </select>
+
+  <!--修改职工查重邮箱-->
+  <select id="validateEmailEdit" resultType="Integer">
+        SELECT
+      COUNT(*)
+       FROM
+         staff
+        WHERE
+      staff_email = #{email,jdbcType=VARCHAR}
+      and <![CDATA[ staff_id <> #{id,jdbcType=INTEGER} ]]>
+  </select>
+</mapper>

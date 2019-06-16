@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.machine.dao.mapper.MachineMapper">
+  <resultMap id="BaseResultMap" type="com.example.machine.model.MachineModel">
+    <id column="machine_id" jdbcType="INTEGER" property="machineId" />
+    <result column="machine_name" jdbcType="VARCHAR" property="machineName" />
+    <result column="machine_msg" jdbcType="VARCHAR" property="machineMsg" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    machine_id, machine_name, machine_msg
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from machine
+    where machine_id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from machine
+    where machine_id = #{machineId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="machine_id" keyProperty="machineId" parameterType="com.example.machine.model.MachineModel" useGeneratedKeys="true">
+    insert into machine (machine_name, machine_msg)
+    values (#{machineName,jdbcType=VARCHAR}, #{machineMsg,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="machine_id" keyProperty="machineId" parameterType="com.example.machine.model.MachineModel" useGeneratedKeys="true">
+    insert into machine
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="machineName != null">
+        machine_name,
+      </if>
+      <if test="machineMsg != null">
+        machine_msg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="machineName != null">
+        #{machineName,jdbcType=VARCHAR},
+      </if>
+      <if test="machineMsg != null">
+        #{machineMsg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.machine.model.MachineModel">
+    update machine
+    <set>
+      <if test="machineName != null">
+        machine_name = #{machineName,jdbcType=VARCHAR},
+      </if>
+      <if test="machineMsg != null">
+        machine_msg = #{machineMsg,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where machine_id = #{machineId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.machine.model.MachineModel">
+    update machine
+    set machine_name = #{machineName,jdbcType=VARCHAR},
+      machine_msg = #{machineMsg,jdbcType=VARCHAR}
+    where machine_id = #{machineId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getAllMachine" resultType="Integer">
+    select machine_id
+    from  machine
+  </select>
+</mapper>

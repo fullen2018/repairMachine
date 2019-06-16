@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>维修单详情</title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="../resource/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="../css/orderList.css" rel="stylesheet" type="text/css" media="all"/>
+    <!-- js -->
+    <script src="../resource/js/jquery.min.js"></script>
+    <!-- //js -->
+    <!-- for-mobile-apps -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
+    function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!-- //for-mobile-apps -->
+    <!-- start-smoth-scrolling -->
+    <script src="../resource/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="../js/move-top.js"></script>
+    <script type="text/javascript" src="../js/easing.js"></script>
+    <script type="text/javascript" src="../js/dateFormat.js"></script>
+    <script type="text/javascript" src="../js/detail.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $(".scroll").click(function(event){
+                event.preventDefault();
+                $('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
+            });
+        });
+    </script>
+    <!-- start-smoth-scrolling -->
+</head>
+
+<body>
+<div class="psd">
+    <div class="container">
+        <!-- header -->
+        <div class="header">
+            <div class="logo-right">
+                <span class="menu"><img src="../images/menu.png" alt=" "/></span>
+            </div>
+            <!-- script for menu -->
+            <script>
+                $( "span.menu" ).click(function() {
+                    $( "ul.nav1" ).slideToggle( 300, function() {
+                        // Animation complete.
+                    });
+                });
+            </script>
+            <!-- //script for menu -->
+        </div>
+        <!-- //header -->
+        <!-- single -->
+        <div style="color:white">
+
+        </div>
+        <div class="single">
+            <div class="clearfix"> </div>
+            <div class="three-com">
+                <div class="leave-comment">
+                    <h3>维修单详情</h3>
+                    <form class="form-horizontal" role="form">
+                        <fieldset>
+                            <div class="form-group">
+                                <div class="col-sm-10" style="width: 100%;height: 400px">
+                                    <textarea name="" style="color: black;height: 100%;line-height: 2;" class="form-control" id="best" cols="30" rows="10" readonly></textarea>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                    <input type="submit" value="返回" id="back" style="margin-left: 20%; margin-top: 50px;display: inline-block">
+                    <input type="submit" value="提交修复记录" id="submitRepair" style="margin-left: 10px;margin-top: 50px;display: inline-block;visibility: hidden">
+                </div>
+            </div>
+        </div>
+        <!-- single -->
+        <!-- footer -->
+        <div class="footer" style="height: 99px">
+            <div class="footer-left">
+                <ul>
+                    <li><a href="#"><img style="height:46px" src="../images/logo001.jpg" alt=" " /></a><span> |</span></li>
+                    <li><p>提供优质的维修服务 <span>0800 (123) 4567 </span></p></li>
+                </ul>
+            </div>
+            <div class="footer-right">
+                <p>Copyright &copy; 2019.NiXteam.</p>
+            </div>
+        </div>
+        <!-- //footer -->
+    </div>
+</div>
+
+<!-- here stars scrolling icon -->
+<!-----------提交维修记录----------->
+<div class="modal " id="submitRepairBody" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">维修记录</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="causes">故障原因</label>
+                    <textarea style="height: 150px"  name="causes" class="form-control" id="causes" placeholder="故障原因"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="parts">使用配件</label>
+                    <textarea style="height: 150px" type="text" name="parts" class="form-control" id="parts" placeholder="使用的配件"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        console.log("数据id："+id);
+        $.ajax({
+            type:"GET",
+            url:"/repair/findById?id="+id,
+            async:true,
+            dataType: 'json',
+            success:function (data) {
+                doData(data.data);
+            }
+        });
+
+
+
+        $().UItoTop({ easingType: 'easeOutQuart' });
+
+    });
+
+    $('#back').click(function () {
+        window.history.go(-1);
+    });
+
+    function doData(data) {
+        console.log(data);
+         status = data.repairStatus;
+        if(data.startTime != null){
+           data.startTime =  data.startTime.substr(0,10)
+        }
+        if(data.endTime != null){
+            data.endTime = data.endTime.substr(0,10);
+        }
+        var str ='';
+        str+=("维修单编号: "+data.repairId);
+        str+=("\n机器编号: "+data.machineId);
+        str+=("\n机器名称: "+data.machine.machineName);
+        str+=("\n机器出故障时间: "+data.repairTime);
+        str+=("\n操作员职工号: "+data.staffOperId);
+        str+=("\n操作员姓名: "+data.staffOperName);
+        str+=("\n维修员职工号: "+data.staffRepairId);
+        str+=("\n维修员姓名: "+data.staffRepairName);
+        switch (data.repairStatus){
+            case 1:
+                str+=("\n维修单状态: 指派中");
+                break;
+            case 2:
+                str+=("\n维修单状态: 维修中");
+                break;
+            case 3:
+                str+=("\n维修单状态: 确认中");
+                break;
+            case 4:
+                str+=("\n维修单状态: 完成");
+                break;
+        }
+        str+=("\n故障描述: "+data.repairDescrp);
+        str+=("\n故障原因: "+data.repairCause);
+        str+=("\n维修使用的零件: "+data.repairPart);
+        $('#best').val(str);
+    }
+
+    var token = JSON.parse(localStorage.getItem("token"));
+    console.log("roleId",token.roleId);
+    if(token.roleId == 2){
+        document.getElementById("submitRepair").style.visibility = "visible";
+    }
+
+</script>
+<!-- //here ends scrolling icon -->
+</body>
+<script>
+
+</script>
+</html>
